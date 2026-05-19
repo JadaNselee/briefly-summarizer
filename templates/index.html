@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="lavender">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briefly | Study Notes Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Welcome / Opening Screen -->
+    <section id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-card">
+            <p id="timeGreeting" class="mini-label">Good evening</p>
+
+            <h1 id="welcomeHeadline">Welcome to Briefly.</h1>
+
+            <p class="welcome-subtitle">
+                What are you in the mood to understand today? Turn messy notes into summaries,
+                flashcards, keywords, and a calmer study plan.
+            </p>
+
+            <div class="choice-grid">
+                <button class="goal-choice selected-goal" data-goal="summarize">
+                    <span>Summarize</span>
+                    <small>Turn notes into a quick brief.</small>
+                </button>
+
+                <button class="goal-choice" data-goal="flashcards">
+                    <span>Flashcards</span>
+                    <small>Practice with question cards.</small>
+                </button>
+
+                <button class="goal-choice" data-goal="review">
+                    <span>Calm Review</span>
+                    <small>Study without the chaos spiral.</small>
+                </button>
+            </div>
+
+            <div class="welcome-form">
+                <div class="form-group">
+                    <label for="welcomeNameInput">Your name</label>
+                    <input id="welcomeNameInput" type="text" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="welcomeThemeSelect">Study theme</label>
+                    <select id="welcomeThemeSelect">
+                        <option value="lavender">Lavender Study</option>
+                        <option value="ocean">Ocean Notes</option>
+                        <option value="peach">Peach Desk</option>
+                        <option value="midnight">Midnight Focus</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="enterAppBtn" class="wide-action-btn">Start my study session</button>
+
+            <p class="welcome-note">
+                Your name, theme, and preferences save locally in this browser.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main App -->
+    <main id="appShell" class="app-shell hidden-app">
+
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div>
+                <p class="mini-label">Briefly</p>
+                <h2 id="mainGreeting">Your study space</h2>
+            </div>
+
+            <button id="openSettingsBtn" class="nav-btn">Settings</button>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero-layout">
+            <article class="hero-panel">
+                <p class="mini-label">AI/NLP Study Companion</p>
+                <h1>Briefly</h1>
+                <p class="hero-copy">
+                    Paste your notes and get a clean study brief with a summary, key ideas,
+                    keywords, flashcards, a study plan, and a focus soundtrack.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#studyInput" class="primary-link">Create a brief</a>
+                    <span id="goalLabel" class="soft-caption">Goal: Summarize</span>
+                </div>
+            </article>
+
+            <article class="mood-panel">
+                <p class="mini-label">Today’s Study Mood</p>
+                <h2>Calm Clarity</h2>
+                <p>
+                    Briefly turns long notes into a study session you can actually move through.
+                </p>
+
+                <div class="mini-player-preview">
+                    <span class="disc-icon"></span>
+                    <div>
+                        <p>Focus player</p>
+                        <strong>lo-fi · rain · classical · ambient</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- Recent Briefs -->
+        <section id="recentBriefsSection" class="recent-panel hidden">
+            <div class="section-heading">
+                <div>
+                    <p class="mini-label">Recent</p>
+                    <h2>Recent study briefs</h2>
+                </div>
+                <button id="clearRecentBtn" class="small-muted-btn">Clear recent</button>
+            </div>
+
+            <div id="recentBriefsList" class="recent-list"></div>
+        </section>
+
+        <!-- Input Area -->
+        <section id="studyInput" class="input-panel">
+            <div class="section-heading">
+                <div>
+                    <p class="mini-label">Step 1</p>
+                    <h2>Paste your notes</h2>
+                </div>
+
+                <span class="status-pill">Ready</span>
+            </div>
+
+            <div class="sample-row">
+                <button class="sample-btn" data-sample="biology">Try Biology Notes</button>
+                <button class="sample-btn" data-sample="history">Try History Notes</button>
+                <button class="sample-btn" data-sample="cs">Try CS Notes</button>
+            </div>
+
+            <textarea 
+                id="notesInput"
+                placeholder="Paste class notes, textbook paragraphs, lecture notes, article text, or assignment instructions here..."
+            ></textarea>
+
+            <div class="button-row">
+                <button id="analyzeBtn">Create Study Brief</button>
+                <button id="clearBtn" class="ghost-btn">Clear</button>
+            </div>
+
+            <p id="errorMessage" class="error-message"></p>
+        </section>
+
+        <!-- Stats -->
+        <section id="statsSection" class="stats-grid hidden">
+            <article class="stat-card">
+                <p>Words</p>
+                <h3 id="wordCountOutput">0</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Sentences</p>
+                <h3 id="sentenceCountOutput">0</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Session Type</p>
+                <h3 id="sessionTypeOutput">—</h3>
+            </article>
+
+            <article class="stat-card">
+                <p>Flashcards Mastered</p>
+                <h3 id="masteredCountOutput">0/0</h3>
+            </article>
+        </section>
+
+        <!-- Results -->
+        <section id="resultsSection" class="results-grid hidden">
+
+            <!-- Focus Player -->
+            <article class="result-card full-card focus-card">
+                <div class="card-topline">
+                    <div>
+                        <p class="mini-label">Focus Player</p>
+                        <h2 id="soundtrackTitle">Recommended Soundtrack</h2>
+                        <p id="soundtrackDescription"></p>
+                    </div>
+
+                    <a id="soundtrackOpenLink" href="#" target="_blank" class="primary-link">
+                        Open playlist
+                    </a>
+                </div>
+
+                <div id="playerEmbedWrap" class="player-embed-wrap">
+                    <iframe
+                        id="youtubePlayer"
+                        src=""
+                        title="Study soundtrack"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <p id="playerFallbackText" class="helper-text hidden">
+                    This link cannot be embedded here, but you can open it in a new tab.
+                </p>
+            </article>
+
+            <!-- Study Plan -->
+            <article class="result-card">
+                <p class="mini-label">Study Plan</p>
+                <h2>What to do first</h2>
+                <ol id="studyPlanOutput"></ol>
+            </article>
+
+            <!-- Keywords -->
+            <article class="result-card">
+                <p class="mini-label">Terms to Know</p>
+                <h2>Keywords</h2>
+                <div id="keywordsOutput" class="keyword-list"></div>
+            </article>
+
+            <!-- Summary -->
+            <article class="result-card full-card summary-card">
+                <div class="card-topline">
+                    <div>
+                        <p class="mini-label">The Brief</p>
+                        <h2>Quick Summary</h2>
+                    </div>
+
+                    <button id="copySummaryBtn" class="small-btn">Copy Summary</button>
+                </div>
+
+                <p id="summaryOutput"></p>
+            </article>
+
+            <!-- Key Ideas -->
+            <article class="result-card">
+                <p class="mini-label">Main Takeaways</p>
+                <h2>Key Ideas</h2>
+                <ul id="keyIdeasOutput"></ul>
+            </article>
+
+            <!-- Simple Explanation -->
+            <article class="result-card simple-card">
+                <p class="mini-label">Beginner Friendly</p>
+                <h2>Explain it simply</h2>
+                <p id="simpleOutput"></p>
+            </article>
+
+            <!-- Flashcards -->
+            <article class="result-card full-card">
+                <div class="card-topline">
+                    <div>
+                        <p class="mini-label">Practice Mode</p>
+                        <h2>Flashcards</h2>
+                    </div>
+
+                    <div class="progress-pill">
+                        <span id="progressText">0/0 mastered</span>
+                    </div>
+                </div>
+
+                <p class="helper-text">
+                    Click a card to flip it. Use “Mark learned” when you know the answer.
+                </p>
+
+                <div id="flashcardsOutput" class="flashcard-grid"></div>
+            </article>
+
+            <!-- Export -->
+            <article class="download-panel full-card">
+                <div>
+                    <p class="mini-label">Export</p>
+                    <h2>Save your study brief</h2>
+                    <p>Download your summary, key ideas, keywords, study plan, and flashcards as a text file.</p>
+                </div>
+
+                <button id="downloadBtn">Download TXT</button>
+            </article>
+        </section>
+
+    </main>
+
+    <!-- Settings Drawer -->
+    <aside id="settingsDrawer" class="settings-drawer">
+        <div class="drawer-header">
+            <div>
+                <p class="mini-label">Settings</p>
+                <h2>Personalize Briefly</h2>
+            </div>
+
+            <button id="closeSettingsBtn" class="icon-btn">×</button>
+        </div>
+
+        <div class="drawer-content">
+            <div class="form-group">
+                <label for="settingsNameInput">Name</label>
+                <input id="settingsNameInput" type="text" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label for="settingsThemeSelect">Theme</label>
+                <select id="settingsThemeSelect">
+                    <option value="lavender">Lavender Study</option>
+                    <option value="ocean">Ocean Notes</option>
+                    <option value="peach">Peach Desk</option>
+                    <option value="midnight">Midnight Focus</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="settingsVibeSelect">Preferred study vibe</label>
+                <select id="settingsVibeSelect">
+                    <option value="lofi">Lo-fi Focus</option>
+                    <option value="rain">Rain Ambience</option>
+                    <option value="classical">Classical Study</option>
+                    <option value="ambient">Ambient Deep Work</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="settingsMusicInput">Custom music link</label>
+                <input id="settingsMusicInput" type="url" placeholder="Paste a YouTube, Spotify, or playlist link">
+                <p class="helper-text">
+                    YouTube links can play inside Briefly. Other links will open in a new tab.
+                </p>
+            </div>
+
+            <button id="saveSettingsBtn" class="wide-action-btn">Save preferences</button>
+            <button id="clearSettingsBtn" class="ghost-btn full-width-btn">Clear preferences</button>
+        </div>
+    </aside>
+
+    <div id="drawerOverlay" class="drawer-overlay"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
