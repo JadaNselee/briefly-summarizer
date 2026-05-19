@@ -62,3 +62,25 @@ briefly-summarizer/
 │   └── style.css
 └── templates/
     └── index.html
+
+What I Learned
+
+While building Briefly, I practiced connecting a Python Flask backend to a front-end interface, organizing a full-stack project structure, using JavaScript for interactivity, and applying basic natural language processing concepts to a real student-focused tool.
+
+I also worked with localStorage to save user preferences, recent study briefs, themes, and personalized settings directly in the browser.
+
+Future Improvements
+	•	Add PDF upload
+	•	Add stronger AI-powered summarization
+	•	Add editable flashcards
+	•	Add quiz mode
+	•	Add progress history
+	•	Add export to PDF
+	•	Improve keyword and summary accuracy
+	•	Add mobile-first refinements
+
+Author
+
+Built by Jàda Nsele.
+
+GitHub: JadaNselee￼
